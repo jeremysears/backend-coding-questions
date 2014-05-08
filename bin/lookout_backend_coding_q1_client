@@ -2,7 +2,7 @@
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 
 require 'optparse'
-require 'lookout/backend_coding_1'
+require 'lookout/backend_coding_questions'
 
 # Parse command line options
 def parse_options
@@ -28,7 +28,7 @@ def parse_options
 end
 
 options = parse_options
-client = Lookout::BackendCoding1::Client.new(options.host,
-                                             options.tcp_port,
-                                             options.udp_port)
+client = Lookout::BackendCodingQuestions::Q1::Client.new(options.host,
+                                                         options.tcp_port,
+                                                         options.udp_port)
 client.run

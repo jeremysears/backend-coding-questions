@@ -10,7 +10,7 @@ MAX_BAD_COUNT = 10 # H
 MAX_EVENT_COUNT = 10 * 1000 * 1000 # How many UDP packets to send
 EVENT_PERIOD = 0.00001 # Sleep between sending UDP packets to give server a chance to keep up
 
-module Lookout::BackendCoding1
+module Lookout::BackendCodingQuestions::Q1
   class Client
     def initialize(host, tcp_port, udp_port)
       @host = host

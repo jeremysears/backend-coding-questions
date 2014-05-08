@@ -1,4 +1,4 @@
-# Lookout::BackendCoding1
+# Lookout::BackendCodingQuestions
 
 ## Background
 
@@ -7,7 +7,7 @@ should give you a feel for the type of problems we work on.
 
 In this coding question, we're looking to differentiate between the normal set of IPs that a client communicates with and abnormal ones that might indicate reaching out to a C&C server for instructions. The clients will be sending UDP packets to the server, each containing a Protobuf-encoded description of the app in question and the IP address it connected to. See [ip_event.proto](ip_event.proto) for the protobuf definition. The server's job (and yours to implement) is to collect these events, then implement a RESTful API to return data about those events.
 
-The [sample client](lib/lookout/backend_coding_1/client.rb) will simulate the stream of events from a variety of clients. Once the client is done sending simulated events, it will make a call to the RESTful API to check that the server captured and analyzed the event stream correctly.
+The [sample client](lib/lookout/backend_coding_questions/q1/client.rb) will simulate the stream of events from a variety of clients. Once the client is done sending simulated events, it will make a call to the RESTful API to check that the server captured and analyzed the event stream correctly.
 
 The server should handle a GET to '/events/:app_sha256'. When called with a JSON accept header, it should return a description of all events for that app_sha256. This should be of the form:
 
@@ -26,11 +26,11 @@ This client will send about 33,000 UDP packets per second for five minutes (10 m
 ## Installation
 
     $ rake build
-    $ gem install pkg/lookout-backend_coding_1.gem
+    $ gem install pkg/backend_coding_questions-0.0.*.gem
 
 ## Usage
 
-    $ ./bin/lookout-backend_coding_1_client --host HOST --tcp TCP_PORT --udp UDP_PORT
+    $ ./bin/lookout_backend_coding_q1_client --host HOST --tcp TCP_PORT --udp UDP_PORT
 
 ## Submitting your code
 
