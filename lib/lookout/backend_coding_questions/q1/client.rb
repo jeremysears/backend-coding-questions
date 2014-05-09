@@ -57,10 +57,15 @@ module Lookout::BackendCodingQuestions::Q1
       @events = []
       (good_ips + bad_ips).each do |ip|
         [@app_sha256, other_sha256, final_sha256].each do |sha256|
-          event = IpEvent.new
-          event.app_sha256 = sha256
-          event.ip = ip.to_i
-          @events << event.serialize_to_string
+
+          # Sorry, but I don't know the intricacies of Ruby string serialization
+          # event = IpEvent.new
+          # event.app_sha256 = sha256
+          # event.ip = ip.to_i
+          # @events << event.serialize_to_string
+          
+          # Just do the sha + the ip as a 64-bit native endian
+          @events << sha256 + [ip.to_i].pack('Q')
         end
       end
       @events
