@@ -16,7 +16,7 @@ module Lookout::BackendCodingQuestions::Q1
       @host = host
       @tcp_port = tcp_port
       @udp_port = udp_port
-      @good_ip_base = IPAddr.new(Forgery(:internet).ip_v4)
+      @good_ip_base = IPAddr.new(Forgery(:internet).ip_v4 + "/255.255.255.240")
       @app_sha256 = SecureRandom.hex(32)
     end
 
@@ -33,7 +33,8 @@ module Lookout::BackendCodingQuestions::Q1
     def good_ips
       return @good_ips if defined?(@good_ips)
       @good_ips = []
-      GOOD_RANGE.times {|n| @good_ips << IPAddr.new(@good_ip_base.to_i + n, Socket::AF_INET)}
+      # Let's do an actual /28 block
+      GOOD_RANGE.times {|n| @good_ips << IPAddr.new(@good_ip_base.to_i + n + 1, Socket::AF_INET)}
       @good_ips
     end
 
@@ -97,9 +98,9 @@ module Lookout::BackendCodingQuestions::Q1
       raise "Dropped too many packets: #{json['count']} out of #{@event_count}" unless
         json['count'] >= @event_count * 0.3 # Leave .03 fudge factor for dropped packets
       raise "No good IP list: #{json}" unless json['good_ips'].kind_of?(Array)
-      raise "Good IP list didn't match: #{json['good_ips'].sort} != #{good_ips.sort}" unless json['good_ips'].sort == good_ips.sort
+      raise "Good IP list didn't match: #{json['good_ips'].sort} != #{good_ips.map(&:to_s).sort}" unless json['good_ips'].sort == good_ips.map(&:to_s).sort
       raise "No bad IP list: #{json}" unless json['bad_ips'].kind_of?(Array)
-      raise "Bad IP list didn't match: #{json['bad_ips'].sort} != #{bad_ips.sort}" unless json['bad_ips'].sort == bad_ips.sort
+      raise "Bad IP list didn't match: #{json['bad_ips'].sort} != #{bad_ips.map(&:to_s).sort}" unless json['bad_ips'].sort == bad_ips.map(&:to_s).sort
     end
   end
 end

@@ -3,6 +3,7 @@ $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 
 require 'optparse'
 require 'lookout/backend_coding_questions'
+require 'ostruct'
 
 # Parse command line options
 def parse_options
