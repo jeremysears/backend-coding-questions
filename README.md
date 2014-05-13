@@ -5,7 +5,7 @@
 At Lookout, we take a data driven approach to security. In part, this means combining static and dynamic analysis of programs with real-world samples of their actions. This coding and design exercise
 should give you a feel for the type of problems we work on.
 
-In this coding question, we're looking to differentiate between the normal set of IPs that a client communicates with and abnormal ones that might indicate reaching out to a C&C server for instructions. The clients will be sending UDP packets to the server, each containing a Protobuf-encoded description of the app in question and the IP address it connected to. See [ip_event.proto](ip_event.proto) for the protobuf definition. The server's job (and yours to implement) is to collect these events, then implement a RESTful API to return data about those events.
+In this coding question, we're looking to differentiate between the normal set of IPs that a client communicates with and abnormal ones that might indicate reaching out to a C&C server for instructions. The clients will be sending UDP packets to the server, each containing a [Protocol Buffer](https://code.google.com/p/protobuf/)-encoded description of the app in question and the IP address it connected to. See [ip_event.proto](ip_event.proto) for the protobuf definition. The server's job (and yours to implement) is to collect these events, then implement a RESTful API to return data about those events.
 
 The [sample client](lib/lookout/backend_coding_questions/q1/client.rb) will simulate the stream of events from a variety of clients. Once the client is done sending simulated events, it will make a call to the RESTful API to check that the server captured and analyzed the event stream correctly.
 
@@ -35,3 +35,7 @@ This client will send about 33,000 UDP packets per second for five minutes (10 m
 ## Submitting your code
 
 Please send your Lookout contact a copy of your code (github link to your own repo or tarball) as well as a pointer to a publicly hosted server where your code is running (Heroku, AWS, etc) along with the ports that it's listening on. Please feel free to use your choice of language and framework. Please also include instructions on compiling and running your code.
+
+## Feedback
+
+Please tell us about your experience with these questions at [codingquestions@lookout.com](mailto:codingquestions@lookout.com) or via your Lookout recruiting contact.

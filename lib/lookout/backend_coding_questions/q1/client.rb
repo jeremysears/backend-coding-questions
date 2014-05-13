@@ -61,6 +61,7 @@ module Lookout::BackendCodingQuestions::Q1
           event = IpEvent.new
           event.app_sha256 = sha256
           event.ip = ip.to_i
+          # Protobuf encoding
           @events << event.serialize_to_string
         end
       end
