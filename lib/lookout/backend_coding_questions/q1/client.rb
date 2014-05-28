@@ -22,12 +22,18 @@ module Lookout::BackendCodingQuestions::Q1
 
     # Start sending events, then check that they were receieved
     def run
-      send_events
+      reset_server
+      good_count = send_events
       response = get_event_status
-      validate_response(response)
+      validate_response(response, good_count)
     end
 
     private
+
+    # Tell the server to drop all events and reset counters
+    def reset_server
+      RestClient.delete "http://#{@host}:#{@tcp_port}/events"
+    end
 
     # Returns a list of GOOD_RANGE IPAddrs
     def good_ips
@@ -62,7 +68,7 @@ module Lookout::BackendCodingQuestions::Q1
           event.app_sha256 = sha256
           event.ip = ip.to_i
           # Protobuf encoding
-          @events << event.serialize_to_string
+          @events << {:data => event.serialize_to_string, :good => (sha256 == @app_sha256) }
         end
       end
       @events
@@ -73,18 +79,26 @@ module Lookout::BackendCodingQuestions::Q1
       socket = UDPSocket.new(Socket::AF_INET)
       socket.connect(@host, @udp_port)
 
-      @event_count = Random.rand(MAX_EVENT_COUNT)
-      @event_count.times do
-        socket.send(events.sample, 0)
+      good_count = 0
+      event_count = Random.rand(MAX_EVENT_COUNT)
+      event_count.times do
+        event = events.sample
+        socket.send(event[:data], 0)
         sleep(EVENT_PERIOD)
+        good_count += 1 if event[:good]
       end
+
+      good_count
     end
 
     # GET /events/@app_sha256 as parse result as JSON
     def get_event_status
-      response = RestClient.get "http://#{@host}:#{@tcp_port}/events/#{@app_sha256}", {:accept => :json}
-      raise "Invalid response from server: #{response.code}: #{response}" unless response.code == 200
-      JSON.parse(response.body)
+      begin
+        response = RestClient.get "http://#{@host}:#{@tcp_port}/events/#{@app_sha256}", {:accept => :json}
+        JSON.parse(response.body)
+      rescue => e
+        raise "Invalid response from server: #{e.inspect}"
+      end
     end
 
     # Validate the JSON response has correct form and data:
@@ -93,15 +107,18 @@ module Lookout::BackendCodingQuestions::Q1
     #  'good_ips':LIST_OF_GOOD_IPS,
     #  'bad_ips':LIST_OF_BAD_IPS
     # }
-    def validate_response(json)
+    def validate_response(json, good_count)
       puts "Received #{json.inspect}"
       raise "Unexpected response #{json.class}:#{json}" unless json.kind_of?(Hash)
-      raise "Dropped too many packets: #{json['count']} out of #{@event_count}" unless
-        json['count'] >= @event_count * 0.3 # Leave .03 fudge factor for dropped packets
       raise "No good IP list: #{json}" unless json['good_ips'].kind_of?(Array)
       raise "Good IP list didn't match: #{json['good_ips'].sort} != #{good_ips.map(&:to_s).sort}" unless json['good_ips'].sort == good_ips.map(&:to_s).sort
       raise "No bad IP list: #{json}" unless json['bad_ips'].kind_of?(Array)
       raise "Bad IP list didn't match: #{json['bad_ips'].sort} != #{bad_ips.map(&:to_s).sort}" unless json['bad_ips'].sort == bad_ips.map(&:to_s).sort
+
+      actual_count = json['count'].to_i
+      dropped = good_count - actual_count
+      pct = actual_count * 100.0 / good_count
+      puts "Dropped #{dropped} packets: Server handled #{actual_count} out of #{good_count} (%.4g%%)" % pct
     end
   end
 end

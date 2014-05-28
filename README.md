@@ -19,9 +19,11 @@ The server should handle a GET to '/events/:app_sha256'. When called with a JSON
 
 For a given app, this exercise assumes it will only hit hosts within a /28 netblock (and thus have 14 valid IPs that it might hit, accounting for gateway and network addresses). The server should determine which IPs make up that /28 and return them as good_ips, and any other IPs are returned as bad_ips.
 
+The server should also handle a DELETE to '/events'. This is used to reset counters and data in between test runs.
+
 ## Scaling considerations
 
-This client will send about 33,000 UDP packets per second for five minutes (10 million events total). Your solution must handle this volume, but please also think about how you'd handle larger volumes and faster rates. You don't necessarily need to implement this, but please include an explanation about how to scale a solution. We also expect to see automated tests for your code, as we expect for all work.
+This client will send about 33,000 UDP packets per second for five minutes (up to 10 million events total). Your solution should handle this volume, but please also think about how you'd handle larger volumes and faster rates. You don't necessarily need to implement this, but please include an explanation about how to scale a solution.
 
 ## Installation
 
@@ -34,7 +36,7 @@ This client will send about 33,000 UDP packets per second for five minutes (10 m
 
 ## Submitting your code
 
-Please send your Lookout contact a copy of your code (github link to your own repo or tarball) as well as a pointer to a publicly hosted server where your code is running (Heroku, AWS, etc) along with the ports that it's listening on. Please feel free to use your choice of language and framework. Please also include instructions on compiling and running your code.
+Please send your Lookout contact a copy of your code (github link to your own repo or tarball) as well as a pointer to a publicly hosted server where your code is running (Heroku, AWS, etc) along with the ports that it's listening on. Please feel free to use your choice of language and framework. Please also include instructions on compiling and running your code. We also expect to see automated tests for your code, as we expect for all work.
 
 ## Feedback
 
