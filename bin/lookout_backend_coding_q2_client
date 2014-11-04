@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby -w
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
+
+require 'optparse'
+require 'lookout/backend_coding_questions'
+require 'ostruct'
+
+# Parse command line options
+def parse_options
+  options = OpenStruct.new
+  options.host = '127.0.0.1'
+  options.tcp_port = 3000
+
+  opt_parser = OptionParser.new do |opts|
+    opts.banner = "Usage: lookout_backend_coding_1_client "
+    opts.on("-h", "--host HOST", String, "Server is running on given host/ip") do |host|
+      options.host = host
+    end
+    opts.on("-t", "--tcp PORT", Integer, "Server is listening for TCP connections on the given port") do |port|
+      options.tcp_port = port
+    end
+  end
+  opt_parser.parse!
+  options
+end
+
+options = parse_options
+client = Lookout::BackendCodingQuestions::Q1::Client.new(options.host,
+                                                         options.tcp_port,
+                                                         0)
+client.run

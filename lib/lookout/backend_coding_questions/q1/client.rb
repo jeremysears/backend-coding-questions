@@ -7,7 +7,8 @@ require 'forgery'
 
 GOOD_RANGE = 14 # A /28 netblock, with gateway and network ips excluded
 MAX_BAD_COUNT = 10 # H
-MAX_EVENT_COUNT = 10 * 1000 * 1000 # How many UDP packets to send
+MAX_UDP_EVENT_COUNT = 10 * 1000 # Maximum number of UDP packets to send
+MAX_REST_EVENT_COUNT = 10 * 1000 # Maximum number of RESTFul events to send
 EVENT_PERIOD = 0.00001 # Sleep between sending UDP packets to give server a chance to keep up
 
 module Lookout::BackendCodingQuestions::Q1
@@ -23,7 +24,11 @@ module Lookout::BackendCodingQuestions::Q1
     # Start sending events, then check that they were receieved
     def run
       reset_server
-      good_count = send_events
+      if @udp_port > 0
+        good_count = send_events_udp
+      else
+        good_count = send_events_rest
+      end
       response = get_event_status
       validate_response(response, good_count)
     end
@@ -74,17 +79,39 @@ module Lookout::BackendCodingQuestions::Q1
       @events
     end
 
-    # Send EVENT_COUNT events as UDP packets to @socket
-    def send_events
+    # Send MAX_UDP_EVENT_COUNT events as UDP packets to @socket
+    def send_events_udp
       socket = UDPSocket.new(Socket::AF_INET)
+      socket.setsockopt(Socket::SOL_SOCKET, Socket::SO_SNDBUF, 1024 * 1024)
       socket.connect(@host, @udp_port)
 
       good_count = 0
-      event_count = Random.rand(MAX_EVENT_COUNT)
+      event_count = Random.rand(MAX_UDP_EVENT_COUNT)
       event_count.times do
         event = events.sample
-        socket.send(event[:data], 0)
+        begin
+          socket.send(event[:data], 0)
+        rescue Errno::ENOBUFS
+          puts "ENOBUFS, waiting"
+          sleep(EVENT_PERIOD * 2)
+          retry
+        end
         sleep(EVENT_PERIOD)
+        good_count += 1 if event[:good]
+      end
+
+      good_count
+    end
+
+    # Send MAX_TCP_EVENT_COUNT events as REST requests
+    def send_events_rest
+      good_count = 0
+      event_count = Random.rand(MAX_REST_EVENT_COUNT)
+      resource = RestClient::Resource.new("http://#{@host}:#{@tcp_port}/events",
+                                          :timeout => 10)
+      event_count.times do
+        event = events.sample
+        resource.post event[:data], {:content_type => 'application/octet-stream'}
         good_count += 1 if event[:good]
       end
 
