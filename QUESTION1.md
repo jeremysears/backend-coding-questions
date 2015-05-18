@@ -27,6 +27,7 @@ This client will send about 33,000 UDP packets per second for five minutes (up t
 
 ## Installation
 
+    $ gem install bundler
     $ rake build
     $ gem install pkg/backend_coding_questions-0.0.*.gem
 

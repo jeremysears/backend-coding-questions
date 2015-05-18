@@ -23,6 +23,7 @@ The server must also handle a DELETE to '/events'. This is used to reset counter
 
 ## Installation
 
+    $ gem install bundler
     $ rake build
     $ gem install pkg/backend_coding_questions-0.0.*.gem
 
