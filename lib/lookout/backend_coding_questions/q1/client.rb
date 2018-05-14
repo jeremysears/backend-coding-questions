@@ -2,7 +2,7 @@ require 'ipaddr'
 require 'socket'
 require 'json'
 require 'securerandom'
-require 'rest_client'
+require 'rest-client'
 require 'forgery'
 
 GOOD_RANGE = 14 # A /28 netblock, with gateway and network ips excluded

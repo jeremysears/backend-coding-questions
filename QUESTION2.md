@@ -17,11 +17,21 @@ Once the client is done sending simulated events, it will make a call to the RES
       'bad_ips':LIST_OF_BAD_IPS
     }
 
-For a given app, this exercise assumes it will only hit hosts within a /28 netblock (and thus have 14 valid IPs that it might hit, accounting for gateway and network addresses). The server should determine which IPs make up that /28 and return them as good_ips, and any other IPs are returned as bad_ips.
+For a given app, this exercise assumes it will only hit hosts within a /28 CIDR netblock (and thus have 14 valid IPs that it might hit, accounting for gateway and network addresses). The server should determine which IPs make up that /28 and return them as good_ips, and any other IPs are returned as bad_ips.  The netblock containing the good_ips will be the most dense netblock for a particular app-sha -- the netblock with the most recorded ip events.
 
 The server must also handle a DELETE to '/events'. This is used to reset counters and data in between test runs.
 
 ## Installation
+
+1) Install [Ruby Version Manager](https://rvm.io/rvm/install) (RVM).
+2) Use RVM to install the version of ruby that the repo uses:
+
+
+    $ rvm install $(<.ruby_version)
+    $ rvm gemset use $(<.ruby_gemset) --create
+
+3) Build the client
+
 
     $ gem install bundler
     $ rake build
@@ -30,3 +40,8 @@ The server must also handle a DELETE to '/events'. This is used to reset counter
 ## Usage
 
     $ ./bin/lookout_backend_coding_q2_client --host HOST --tcp TCP_PORT
+
+Note, you may see the following deprecation warning, but you can safely ignore it:
+
+
+    ~/.rvm/gems/ruby-2.5.1@backend-coding-questions/gems/ruby_protobuf-0.4.11/lib/protobuf/message/enum.rb:49: warning: constant ::Fixnum is deprecated

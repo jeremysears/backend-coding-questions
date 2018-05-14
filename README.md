@@ -11,6 +11,8 @@ Current questions:
 
 Please send your Lookout contact a copy of your code (github link to your own repo or tarball). Please feel free to use your choice of language and framework. Please also include instructions on compiling (if appropriate) and running your code. We also expect to see automated tests for your code, as we expect for all work.
 
+If you post your solution online, please remove any trivially searchable terms, such as "lookout", from your repository that would allow other candidates to find your work.
+
 For extra credit, we'd appreciate a pointer to a publicly hosted server where your code is running (Heroku, AWS, etc) along with the ports that it's listening on, to ease our validation.
 
 ## Feedback

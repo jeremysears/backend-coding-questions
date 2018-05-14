@@ -3,7 +3,9 @@
 # package lookout.backend_coding_questions.q1;
 # 
 # message IpEvent {
+#   // A unique SHA256 hash of an app, used as a unique ID for the app
 #   required string app_sha256 = 1;
+#   // A single IPV4 address that an app has connected to.
 #   required int64 ip = 2;
 # }
 require 'protobuf/message/message'

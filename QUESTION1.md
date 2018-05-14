@@ -27,6 +27,16 @@ This client will send about 33,000 UDP packets per second for five minutes (up t
 
 ## Installation
 
+1) Install [Ruby Version Manager](https://rvm.io/rvm/install) (RVM).
+2) Use RVM to install the version of ruby that the repo uses:
+
+
+    $ rvm install $(<.ruby_version)
+    $ rvm gemset use $(<.ruby_gemset) --create
+
+3) Build the client
+
+
     $ gem install bundler
     $ rake build
     $ gem install pkg/backend_coding_questions-0.0.*.gem
@@ -34,3 +44,8 @@ This client will send about 33,000 UDP packets per second for five minutes (up t
 ## Usage
 
     $ ./bin/lookout_backend_coding_q1_client --host HOST --tcp TCP_PORT --udp UDP_PORT
+
+Note, you may see the following deprecation warning, but you can safely ignore it:
+
+
+    ~/.rvm/gems/ruby-2.5.1@backend-coding-questions/gems/ruby_protobuf-0.4.11/lib/protobuf/message/enum.rb:49: warning: constant ::Fixnum is deprecated
